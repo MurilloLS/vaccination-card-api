@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VaccinationCard.Application.UseCases.Persons.Commands.CreatePerson;
 using VaccinationCard.Application.UseCases.Persons.Queries.GetPersonCard;
+using VaccinationCard.Application.UseCases.Persons.Commands.DeletePerson;
 
 namespace VaccinationCard.Api.Controllers;
 
@@ -42,5 +43,22 @@ public class PersonsController : ControllerBase
 
         // Se achou, retorna 200 OK com o DTO
         return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)] // Mudou de 204 para 200
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var command = new DeletePersonCommand(id);
+        var deletedPerson = await _mediator.Send(command);
+
+        if (deletedPerson == null)
+        {
+            return NotFound(new { message = "Person not found" });
+        }
+
+        // Retorna o objeto apagado
+        return Ok(deletedPerson);
     }
 }
