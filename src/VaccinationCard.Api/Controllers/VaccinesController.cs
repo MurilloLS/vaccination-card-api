@@ -1,6 +1,6 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using VaccinationCard.Infrastructure.Persistence;
+using VaccinationCard.Application.UseCases.Vaccines.Queries.GetAllVaccines;
 
 namespace VaccinationCard.Api.Controllers;
 
@@ -8,26 +8,18 @@ namespace VaccinationCard.Api.Controllers;
 [Route("api/[controller]")]
 public class VaccinesController : ControllerBase
 {
-    private readonly VaccinationDbContext _context;
+    private readonly IMediator _mediator;
 
-    public VaccinesController(VaccinationDbContext context)
+    public VaccinesController(IMediator mediator)
     {
-        _context = context;
+        _mediator = mediator;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var vaccines = await _context.Vaccines
-            .Include(v => v.Category)
-            .Select(v => new 
-            { 
-                v.Id, 
-                Vaccine = v.Name, 
-                Category = v.Category.Name 
-            })
-            .ToListAsync();
-
-        return Ok(vaccines);
+        var query = new GetAllVaccinesQuery();
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 }
