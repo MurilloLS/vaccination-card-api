@@ -39,4 +39,12 @@ public sealed class Vaccination
         DomainException.When(dose.Length > 5, "Dose code cannot exceed 5 characters.");
         DomainException.When(applicationDate > DateTime.Now, "Application date cannot be in the future.");
     }
+
+    public void Update(int vaccineId, string dose, DateTime applicationDate)
+    {
+        ValidateDomain(PersonId, vaccineId, dose, applicationDate);
+        VaccineId = vaccineId;
+        Dose = dose;
+        ApplicationDate = applicationDate;
+    }
 }
