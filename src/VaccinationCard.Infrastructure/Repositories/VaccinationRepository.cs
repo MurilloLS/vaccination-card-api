@@ -40,4 +40,10 @@ public class VaccinationRepository : IVaccinationRepository
         _context.Vaccinations.Remove(vaccination);
         await _context.SaveChangesAsync();
     }
+
+    public async Task UpdateAsync(Vaccination vaccination)
+    {
+        _context.Vaccinations.Update(vaccination);
+        await _context.SaveChangesAsync();
+    }
 }

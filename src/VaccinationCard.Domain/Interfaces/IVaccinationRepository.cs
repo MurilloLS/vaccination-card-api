@@ -8,4 +8,5 @@ public interface IVaccinationRepository
     Task<IEnumerable<Vaccination>> GetByPersonIdAsync(int personId);
     Task<Vaccination?> GetByIdAsync(int id);
     Task DeleteAsync(Vaccination vaccination);
+    Task UpdateAsync(Vaccination vaccination);
 }
