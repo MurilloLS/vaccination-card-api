@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VaccinationCard.Application.UseCases.Persons.Commands.CreatePerson;
 using VaccinationCard.Application.UseCases.Persons.Queries.GetPersonCard;
+using VaccinationCard.Application.UseCases.Persons.Queries.GetAllPersons;
 using VaccinationCard.Application.UseCases.Persons.Commands.DeletePerson;
 using VaccinationCard.Application.UseCases.Persons.Commands.UpdatePerson;
 using VaccinationCard.Application.DTOs;
@@ -44,6 +45,16 @@ public class PersonsController : ControllerBase
         }
 
         // Se achou, retorna 200 OK com o DTO
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAll()
+    {
+        var query = new GetAllPersonsQuery();
+        var result = await _mediator.Send(query);
+        
         return Ok(result);
     }
 
