@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using VaccinationCard.Application.UseCases.Persons.Commands.CreatePerson;
 using VaccinationCard.Application.UseCases.Persons.Queries.GetPersonCard;
 using VaccinationCard.Application.UseCases.Persons.Commands.DeletePerson;
+using VaccinationCard.Application.UseCases.Persons.Commands.UpdatePerson;
+using VaccinationCard.Application.DTOs;
 
 namespace VaccinationCard.Api.Controllers;
 
@@ -60,5 +62,27 @@ public class PersonsController : ControllerBase
 
         // Retorna o objeto apagado
         return Ok(deletedPerson);
+    }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdatePersonRequest request)
+    {
+        var command = new UpdatePersonCommand(
+            id, 
+            request.Name, 
+            request.Age, 
+            request.Gender
+        );
+
+        var updatedPerson = await _mediator.Send(command);
+
+        if (updatedPerson == null)
+        {
+            return NotFound(new { message = "Person not found" });
+        }
+
+        return Ok(updatedPerson);
     }
 }
