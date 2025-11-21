@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VaccinationCard.Application.DTOs;
 using VaccinationCard.Application.UseCases.Vaccinations.Commands.CreateVaccination;
@@ -8,6 +9,7 @@ using VaccinationCard.Application.UseCases.Vaccinations.Queries.GetVaccinationBy
 
 namespace VaccinationCard.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class VaccinationsController : ControllerBase
@@ -19,6 +21,7 @@ public class VaccinationsController : ControllerBase
         _mediator = mediator;
     }
 
+    // POST
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -58,6 +61,7 @@ public class VaccinationsController : ControllerBase
 
     // DELETE
     [HttpDelete("{id}")]
+    [Authorize(Roles = "ADMIN")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)

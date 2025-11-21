@@ -6,9 +6,11 @@ using VaccinationCard.Application.UseCases.Persons.Queries.GetAllPersons;
 using VaccinationCard.Application.UseCases.Persons.Commands.DeletePerson;
 using VaccinationCard.Application.UseCases.Persons.Commands.UpdatePerson;
 using VaccinationCard.Application.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VaccinationCard.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class PersonsController : ControllerBase
@@ -20,6 +22,7 @@ public class PersonsController : ControllerBase
         _mediator = mediator;
     }
 
+    // POST
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -31,6 +34,7 @@ public class PersonsController : ControllerBase
         return CreatedAtAction(nameof(Create), new { id = response.Id }, response);
     }
 
+    // GET By Id
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -48,6 +52,7 @@ public class PersonsController : ControllerBase
         return Ok(result);
     }
 
+    // GET All
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
@@ -58,7 +63,9 @@ public class PersonsController : ControllerBase
         return Ok(result);
     }
 
+    // DELETE
     [HttpDelete("{id}")]
+    [Authorize(Roles = "ADMIN")]
     [ProducesResponseType(StatusCodes.Status200OK)] // Mudou de 204 para 200
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
@@ -75,6 +82,7 @@ public class PersonsController : ControllerBase
         return Ok(deletedPerson);
     }
 
+    // PUT (Update)
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
