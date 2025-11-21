@@ -1,6 +1,7 @@
 using VaccinationCard.Infrastructure;
 using VaccinationCard.Application;
 using VaccinationCard.Infrastructure.Persistence;
+using VaccinationCard.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,10 @@ builder.Services.AddSwaggerGen();
 // Injeção de Dependência
 builder.Services.AddInfrastructure();
 builder.Services.AddApplication();
+
+// Handler de erro
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
@@ -45,6 +50,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseExceptionHandler();
 
 app.UseAuthorization();
 
