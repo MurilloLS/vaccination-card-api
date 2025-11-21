@@ -14,5 +14,8 @@ public class MappingProfile : Profile
         CreateMap<Vaccination, VaccinationDto>()
         .ForMember(dest => dest.PersonName, opt => opt.MapFrom(src => src.Person.Name))
         .ForMember(dest => dest.VaccineName, opt => opt.MapFrom(src => src.Vaccine.Name));
+
+        CreateMap<Vaccine, VaccineDto>()
+        .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name));
     }
 }
