@@ -1,13 +1,36 @@
 using VaccinationCard.Domain.Entities;
+using VaccinationCard.Application.Common.Interfaces;
 
 namespace VaccinationCard.Infrastructure.Persistence;
 
 public static class DbInitializer
 {
-    public static void Initialize(VaccinationDbContext context)
+    // Adicione o parâmetro 'hasher'
+    public static void Initialize(VaccinationDbContext context, IPasswordHasher hasher)
     {
         context.Database.EnsureCreated();
 
+        SeedCategoriesAndVaccines(context);
+        SeedUsers(context, hasher); // <--- Novo método
+    }
+
+    private static void SeedUsers(VaccinationDbContext context, IPasswordHasher hasher)
+    {
+        if (context.Users.Any()) return;
+
+        // Cria um Admin padrão
+        var admin = new User(
+            "admin", 
+            hasher.Hash("admin123"), // Senha forte ;)
+            "ADMIN" // <--- A Role mágica
+        );
+
+        context.Users.Add(admin);
+        context.SaveChanges();
+    }
+
+    private static void SeedCategoriesAndVaccines(VaccinationDbContext context)
+    {
         if (context.VaccineCategories.Any()) return;
 
         var catNacional = new VaccineCategory("Carteira Nacional de Vacinação");
