@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using VaccinationCard.Application.UseCases.Vaccines.Commands.CreateVaccine;
 using VaccinationCard.Application.UseCases.Vaccines.Queries.GetAllVaccines;
 using VaccinationCard.Application.UseCases.Vaccines.Commands.UpdateVaccine;
+using VaccinationCard.Application.UseCases.Vaccines.Commands.DeleteVaccine;
 using VaccinationCard.Application.DTOs;
 
 namespace VaccinationCard.Api.Controllers;
@@ -45,13 +46,28 @@ public class VaccinesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateVaccineRequest request)
     {
-        // A Mágica: O Controller mescla o ID da rota com os dados do corpo
         var command = new UpdateVaccineCommand(id, request.Name, request.CategoryId);
 
         var result = await _mediator.Send(command);
         
         if (result == null) return NotFound();
         
+        return Ok(result);
+    }
+
+    // DELETE
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "ADMIN")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var command = new DeleteVaccineCommand(id);
+        var result = await _mediator.Send(command);
+
+        if (result == null) return NotFound();
+
         return Ok(result);
     }
 }
