@@ -11,8 +11,13 @@ using VaccinationCard.Infrastructure.Persistence;
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Configurar JWT Auth
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
+var jwtSecret = builder.Configuration["Jwt:Secret"] 
+                ?? "UmaChaveMuitoSeguraEMuitoLongaParaOAlgoritmoHmacSha256FuncionarBem!!!";
+
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "VaccinationApi";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "VaccinationClient";
+
+var secretKey = Encoding.UTF8.GetBytes(jwtSecret);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -27,8 +32,9 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
+        
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
         IssuerSigningKey = new SymmetricSecurityKey(secretKey)
     };
 });
@@ -95,10 +101,11 @@ app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 
-// 3. Ordem Importante!
-app.UseAuthentication(); // Quem é você?
-app.UseAuthorization();  // O que você pode fazer?
+app.UseAuthentication(); 
+app.UseAuthorization(); 
 
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
