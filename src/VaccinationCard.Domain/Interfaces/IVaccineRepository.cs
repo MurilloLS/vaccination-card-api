@@ -7,4 +7,6 @@ public interface IVaccineRepository
     Task<Vaccine?> GetByIdAsync(int id);
     Task<IEnumerable<Vaccine>> GetAllAsync();
     Task<Vaccine> AddAsync(Vaccine vaccine);
+
+    Task UpdateAsync(Vaccine vaccine);
 }

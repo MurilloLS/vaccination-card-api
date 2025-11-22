@@ -22,4 +22,13 @@ public sealed class Vaccine
         Name = name;
         CategoryId = categoryId;
     }
+
+    public void Update(string name, int categoryId)
+    {
+        DomainException.When(string.IsNullOrEmpty(name), "Vaccine name is required.");
+        DomainException.When(categoryId <= 0, "Invalid Category ID.");
+        
+        Name = name;
+        CategoryId = categoryId;
+    }
 }

@@ -34,4 +34,10 @@ public class VaccineRepository : IVaccineRepository
         await _context.SaveChangesAsync();
         return vaccine;
     }
+
+    public async Task UpdateAsync(Vaccine vaccine)
+    {
+        _context.Vaccines.Update(vaccine);
+        await _context.SaveChangesAsync();
+    }
 }
