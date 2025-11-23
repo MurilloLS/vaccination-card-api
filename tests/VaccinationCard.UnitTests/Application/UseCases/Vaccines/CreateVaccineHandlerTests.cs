@@ -26,7 +26,7 @@ public class CreateVaccineHandlerTests
     public async Task Handle_Should_CreateVaccine_When_Valid()
     {
         // ARRANGE
-        var command = new CreateVaccineCommand("Nova Vacina", 1);
+        var command = new CreateVaccineCommand("Nova Vacina", 1, 5);
         
         _mapperMock.Setup(m => m.Map<VaccineDto>(It.IsAny<Vaccine>()))
             .Returns(new VaccineDto { Id = 1, Name = "Nova Vacina" });

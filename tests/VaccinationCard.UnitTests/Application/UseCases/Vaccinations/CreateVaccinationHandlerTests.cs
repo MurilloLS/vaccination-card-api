@@ -44,7 +44,7 @@ public class CreateVaccinationHandlerTests
         var command = new CreateVaccinationCommand(1, 1, "D1", DateTime.Now);
 
         var person = new Person("Murillo", 30, "M"); 
-        var vaccine = new Vaccine("BCG", 1);         
+        var vaccine = new Vaccine("BCG", 1, 5);         
         
         // Configura o Mock
         _personRepoMock.Setup(r => r.GetByIdAsync(command.PersonId))

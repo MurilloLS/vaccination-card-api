@@ -26,7 +26,7 @@ public class GetAllVaccinesHandlerTests
     public async Task Handle_Should_ReturnAllVaccines()
     {
         // ARRANGE
-        var vaccines = new List<Vaccine> { new Vaccine("BCG", 1) };
+        var vaccines = new List<Vaccine> { new Vaccine("BCG", 1, 1) };
         
         _repoMock.Setup(r => r.GetAllAsync()).ReturnsAsync(vaccines);
         _mapperMock.Setup(m => m.Map<IEnumerable<VaccineDto>>(vaccines))

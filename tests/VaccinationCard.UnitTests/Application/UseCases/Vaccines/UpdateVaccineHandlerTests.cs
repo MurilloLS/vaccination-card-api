@@ -26,8 +26,8 @@ public class UpdateVaccineHandlerTests
     public async Task Handle_Should_Update_When_VaccineExists()
     {
         // ARRANGE
-        var command = new UpdateVaccineCommand(1, "Nome Editado", 1);
-        var vaccine = new Vaccine("Nome Antigo", 1);
+        var command = new UpdateVaccineCommand(1, "Nome Editado", 1, 5);
+        var vaccine = new Vaccine("Nome Antigo", 1, 3);
 
         _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(vaccine);
         _mapperMock.Setup(m => m.Map<VaccineDto>(vaccine)).Returns(new VaccineDto());
@@ -46,7 +46,7 @@ public class UpdateVaccineHandlerTests
     {
         _repoMock.Setup(r => r.GetByIdAsync(99)).ReturnsAsync((Vaccine?)null);
         
-        var result = await _handler.Handle(new UpdateVaccineCommand(99, "X", 1), CancellationToken.None);
+        var result = await _handler.Handle(new UpdateVaccineCommand(99, "X", 1, 5), CancellationToken.None);
         
         result.Should().BeNull();
         _repoMock.Verify(r => r.UpdateAsync(It.IsAny<Vaccine>()), Times.Never);

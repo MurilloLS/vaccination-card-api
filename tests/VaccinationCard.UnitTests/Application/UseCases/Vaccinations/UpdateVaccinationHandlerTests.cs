@@ -31,7 +31,7 @@ public class UpdateVaccinationHandlerTests
         var command = new UpdateVaccinationCommand(1, 2, "D2", DateTime.Now);
         
         var existingVaccination = new Vaccination(1, 1, "D1", DateTime.Now.AddDays(-10));
-        var newVaccine = new Vaccine("Coronavac", 1); 
+        var newVaccine = new Vaccine("Coronavac", 1, 5); 
 
         _vaccinationRepoMock.Setup(r => r.GetByIdAsync(command.Id)).ReturnsAsync(existingVaccination);
         _vaccineRepoMock.Setup(r => r.GetByIdAsync(command.VaccineId)).ReturnsAsync(newVaccine);

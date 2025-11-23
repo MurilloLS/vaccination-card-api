@@ -27,7 +27,7 @@ public class DeleteVaccineHandlerTests
     public async Task Handle_Should_Delete_When_VaccineNotUsed()
     {
         // ARRANGE
-        var vaccine = new Vaccine("Vacina Teste", 1);
+        var vaccine = new Vaccine("Vacina Teste", 1, 5);
         typeof(Vaccine).GetProperty(nameof(Vaccine.Id))!.SetValue(vaccine, 1);
         
         _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(vaccine);
@@ -47,7 +47,7 @@ public class DeleteVaccineHandlerTests
     public async Task Handle_Should_ThrowException_When_VaccineInUse()
     {
         // ARRANGE
-        var vaccine = new Vaccine("Vacina Importante", 1);
+        var vaccine = new Vaccine("Vacina Importante", 1, 5);
         
         typeof(Vaccine).GetProperty(nameof(Vaccine.Id))!.SetValue(vaccine, 1);
         _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(vaccine);
