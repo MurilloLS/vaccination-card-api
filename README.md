@@ -74,7 +74,7 @@ VaccinationCardSolution/
 
 ---
 
-## 🧠 Decisões de Design e Negócio (Architectural Decision Records)
+## 🧠 Decisões de Design e Negócio (ADRs)
 
 Nesta seção, documentei as escolhas estratégicas feitas durante o desenvolvimento para equilibrar os requisitos do desafio com as melhores práticas de engenharia de software.
 
@@ -142,7 +142,7 @@ A API é protegida via **JWT (JSON Web Token)**.
 
 1.  **Clone o repositório:**
     ```bash
-    git clone https://github.com/seu-usuario/vaccination-card-api.git
+    git clone https://github.com/MurilloLS/vaccination-card-api.git
     cd VaccinationCardSolution
     ```
 
