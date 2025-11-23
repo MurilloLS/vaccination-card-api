@@ -302,3 +302,35 @@ FOREIGN KEY(id_person) REFERENCES PERSON (id_person)ON DELETE CASCADE
 
 ALTER TABLE VACCINE ADD FOREIGN KEY(id_vaccine_category) REFERENCES VACCINE_CATEGORY (id_vaccine_category)
 ```
+
+---
+
+## 🔄 Histórico de Evoluções e Decisões Recentes (Errata)
+
+Esta seção documenta alterações estruturais e decisões técnicas implementadas após a versão inicial do projeto.
+
+### 1. Implementação de Doses Dinâmicas (Banco Alterado)
+* **O Desafio:** Inicialmente, o sistema não restringia o número de doses de uma vacina no Backend, dependendo de regras fixas no Frontend. Isso gerava inconsistências ao criar novas vacinas.
+* **A Solução:** Evoluímos para uma abordagem **Data-Driven**.
+    * **Backend:** Adicionamos a propriedade `MaxDoses` na entidade `Vaccine`, validando valores entre 1 (dose única) e 5 (esquema completo). A tabela `VACCINE` recebeu a coluna correspondente.
+    * **Frontend:** O cadastro de vacinas agora exige que o Admin defina o número de doses. A interface do cartão se adapta dinamicamente, exibindo apenas os "slots" de doses pertinentes àquela vacina.
+    * **Seed:** O `DbInitializer` foi atualizado para carregar vacinas com suas doses reais (ex: BCG = 1 dose, Pólio = 5 doses), garantindo realismo desde o primeiro boot.
+
+```sql
+CREATE TABLE VACCINE (
+id_vaccine INTEGER PRIMARY KEY,
+nm_vaccine VARCHAR(150) NOT NULL,
+id_vaccine_category INTEGER NOT NULL,
+nr_max_doses INTEGER NOT NULL DEFAULT 5 -- Nova Coluna
+)
+```
+
+### 2. Correção de Vínculo de Categoria (Payload de Retorno)
+* **O Problema:** Ao criar uma vacina via API, o DTO de resposta retornava o nome da categoria como `null`, pois o Entity Framework não recarregava a propriedade de navegação (*Navigation Property*) imediatamente após a inserção.
+* **A Solução:**
+    * Atualizamos o `VaccineDto` para expor explicitamente o `CategoryId`, garantindo a confirmação imediata do vínculo salvo.
+    * Ajustamos o `CreateVaccineHandler` para recarregar a entidade completa (com `Include`) antes de mapear para o DTO, garantindo que o cliente (Frontend/Swagger) receba o objeto completo e consistente instantaneamente.
+
+### 3. Atualização da Suíte de Testes
+* **Impacto:** As alterações no construtor da entidade `Vaccine` (exigindo `MaxDoses`) quebraram os testes unitários existentes.
+* **Ação:** Todos os testes de caso de uso (`Create`, `Update`, `Delete`, `GetAll`) foram refatorados para contemplar a nova propriedade, mantendo a cobertura de testes em 100% e garantindo que a nova regra de negócio (1-5 doses) seja respeitada.
