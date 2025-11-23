@@ -1,16 +1,17 @@
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using VaccinationCard.Application.UseCases.Vaccines.Commands.CreateVaccine;
+using Microsoft.AspNetCore.Mvc;
+using MediatR;
 using VaccinationCard.Application.UseCases.Vaccines.Queries.GetAllVaccines;
+using VaccinationCard.Application.UseCases.Vaccines.Commands.CreateVaccine;
 using VaccinationCard.Application.UseCases.Vaccines.Commands.UpdateVaccine;
 using VaccinationCard.Application.UseCases.Vaccines.Commands.DeleteVaccine;
 using VaccinationCard.Application.DTOs;
 
 namespace VaccinationCard.Api.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
+[ApiController]
+[Authorize]
 public class VaccinesController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -20,54 +21,41 @@ public class VaccinesController : ControllerBase
         _mediator = mediator;
     }
 
-    // POST
-    [HttpPost]
-    [Authorize(Roles = "ADMIN")] 
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> Create([FromBody] CreateVaccineCommand command)
-    {
-        var result = await _mediator.Send(command);
-        return Created("", result);
-    }
-
-    // GET
+    // GET: api/Vaccines
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var query = new GetAllVaccinesQuery();
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(new GetAllVaccinesQuery());
         return Ok(result);
     }
 
-    // PUT
+    // POST: api/Vaccines
+    [HttpPost]
+    [Authorize(Roles = "ADMIN")]
+    public async Task<IActionResult> Create([FromBody] CreateVaccineRequest request)
+    {
+        var command = new CreateVaccineCommand(request.Name, request.CategoryId, request.MaxDoses);
+        var response = await _mediator.Send(command);
+        
+        return Ok(response);
+    }
+
+    // PUT: api/Vaccines/5
     [HttpPut("{id}")]
     [Authorize(Roles = "ADMIN")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateVaccineRequest request)
     {
-        var command = new UpdateVaccineCommand(id, request.Name, request.CategoryId);
-
-        var result = await _mediator.Send(command);
-        
-        if (result == null) return NotFound();
-        
-        return Ok(result);
+        var command = new UpdateVaccineCommand(id, request.Name, request.CategoryId, request.MaxDoses);
+        await _mediator.Send(command);
+        return Ok(new { message = "Vaccine updated successfully." });
     }
 
-    // DELETE
+    // DELETE: api/Vaccines/5
     [HttpDelete("{id}")]
     [Authorize(Roles = "ADMIN")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Remove(int id)
     {
-        var command = new DeleteVaccineCommand(id);
-        var result = await _mediator.Send(command);
-
-        if (result == null) return NotFound();
-
-        return Ok(result);
+        await _mediator.Send(new DeleteVaccineCommand(id));
+        return Ok(new { message = "Vaccine deleted successfully." });
     }
 }

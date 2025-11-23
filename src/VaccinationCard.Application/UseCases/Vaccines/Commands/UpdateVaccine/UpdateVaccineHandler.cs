@@ -21,7 +21,7 @@ public class UpdateVaccineHandler : IRequestHandler<UpdateVaccineCommand, Vaccin
         var vaccine = await _repository.GetByIdAsync(request.Id);
         if (vaccine == null) return null;
 
-        vaccine.Update(request.Name, request.CategoryId);
+        vaccine.Update(request.Name, request.CategoryId, request.MaxDoses);
 
         await _repository.UpdateAsync(vaccine);
 

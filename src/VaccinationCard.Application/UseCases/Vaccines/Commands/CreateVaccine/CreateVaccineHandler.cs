@@ -8,24 +8,20 @@ namespace VaccinationCard.Application.UseCases.Vaccines.Commands.CreateVaccine;
 
 public class CreateVaccineHandler : IRequestHandler<CreateVaccineCommand, VaccineDto>
 {
-    private readonly IVaccineRepository _repository;
+    private readonly IVaccineRepository _vaccineRepository;
     private readonly IMapper _mapper;
 
-    public CreateVaccineHandler(IVaccineRepository repository, IMapper mapper)
+    public CreateVaccineHandler(IVaccineRepository vaccineRepository, IMapper mapper)
     {
-        _repository = repository;
+        _vaccineRepository = vaccineRepository;
         _mapper = mapper;
     }
 
     public async Task<VaccineDto> Handle(CreateVaccineCommand request, CancellationToken cancellationToken)
     {
-        // Cria a entidade
-        var vaccine = new Vaccine(request.Name, request.CategoryId);
+        var vaccine = new Vaccine(request.Name, request.CategoryId, request.MaxDoses);
 
-        // Salva (O repositório já existe)
-        await _repository.AddAsync(vaccine);
-
-        // Retorna DTO (O Mapper já existe)
+        await _vaccineRepository.AddAsync(vaccine);
         return _mapper.Map<VaccineDto>(vaccine);
     }
 }

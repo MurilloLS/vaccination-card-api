@@ -20,11 +20,11 @@ namespace VaccinationCard.Infrastructure.Persistence
 
             var categories = new List<VaccineCategory>
             {
-                new VaccineCategory("Carteina Nacional de Vacinação"), // ID 1
-                new VaccineCategory("Anti Rabica"),                    // ID 2
-                new VaccineCategory("BCG de Contato"),                 // ID 3
-                new VaccineCategory("Vacinas Particulares"),           // ID 4
-                new VaccineCategory("Outras Vacinas")                  // ID 5
+                new VaccineCategory("Carteina Nacional de Vacinação"), 
+                new VaccineCategory("Anti Rabica"),
+                new VaccineCategory("BCG de Contato"),
+                new VaccineCategory("Vacinas Particulares"),
+                new VaccineCategory("Outras Vacinas")
             };
 
             context.VaccineCategories.AddRange(categories);
@@ -48,7 +48,7 @@ namespace VaccinationCard.Infrastructure.Persistence
         private static void SeedVaccines(VaccinationDbContext context)
         {
             if (context.Vaccines.Any()) return;
-            
+
             var catNacional = context.VaccineCategories
                 .FirstOrDefault(c => c.Name == "Carteina Nacional de Vacinação");
 
@@ -56,16 +56,22 @@ namespace VaccinationCard.Infrastructure.Persistence
             {
                 var vacinas = new List<Vaccine>
                 {
-                    new Vaccine("BCG", catNacional.Id),
-                    new Vaccine("HEPATITE B", catNacional.Id),
-                    new Vaccine("ANTI-POLIO (SABIN)", catNacional.Id),
-                    new Vaccine("TETRA VALENTE", catNacional.Id),
-                    new Vaccine("TRIPLICE BACTERIANA (DPT)", catNacional.Id),
-                    new Vaccine("HAEMOPHILUS INFLUENZAE", catNacional.Id),
-                    new Vaccine("PNEUMO 10 VALENTE", catNacional.Id),
-                    new Vaccine("ROTAVIRUS", catNacional.Id),            
-                    new Vaccine("TRIPLICE ACELULAR", catNacional.Id),
-                    new Vaccine("MENINGO B", catNacional.Id)
+                    // 1 Dose
+                    new Vaccine("BCG", catNacional.Id, 1),
+                    new Vaccine("FEBRE AMARELA", catNacional.Id, 1),
+                    new Vaccine("ROTAVIRUS", catNacional.Id, 2),
+
+                    // 3 Doses
+                    new Vaccine("HEPATITE B", catNacional.Id, 3),
+                    new Vaccine("PNEUMO 10 VALENTE", catNacional.Id, 3),
+                    new Vaccine("MENINGO B", catNacional.Id, 3),
+
+                    // 5 Doses (Esquema Completo D1..R2)
+                    new Vaccine("ANTI-POLIO (SABIN)", catNacional.Id, 5),
+                    new Vaccine("TETRA VALENTE", catNacional.Id, 5),
+                    new Vaccine("TRIPLICE BACTERIANA (DPT)", catNacional.Id, 5),
+                    new Vaccine("HAEMOPHILUS INFLUENZAE", catNacional.Id, 3),
+                    new Vaccine("TRIPLICE ACELULAR", catNacional.Id, 3)
                 };
 
                 context.Vaccines.AddRange(vacinas);
