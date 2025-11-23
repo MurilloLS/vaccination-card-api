@@ -22,6 +22,8 @@ public class CreateVaccineHandler : IRequestHandler<CreateVaccineCommand, Vaccin
         var vaccine = new Vaccine(request.Name, request.CategoryId, request.MaxDoses);
 
         await _vaccineRepository.AddAsync(vaccine);
-        return _mapper.Map<VaccineDto>(vaccine);
+        var vaccineCompleta = await _vaccineRepository.GetByIdAsync(vaccine.Id);
+
+        return _mapper.Map<VaccineDto>(vaccineCompleta);
     }
 }
