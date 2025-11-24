@@ -248,18 +248,6 @@ The API is fully documented via **Swagger UI** (accessible at `/swagger`). Below
 
 # 🗄 Database Modeling
 
-Below are the placeholders for the diagrams.
-
-## 🧩 Conceptual Model  
-![Conceptual Model](./docs/db/ConceptualModel.bmp)
-
----
-
-## 🧠 Logical Model  
-![Logical Model](./docs/db/LogicalModel.bmp)
-
----
-
 ## 🧱 Physical Model (SQL ANSI 2003 – brModelo)
 
 ```sql
