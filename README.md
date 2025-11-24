@@ -251,12 +251,12 @@ The API is fully documented via **Swagger UI** (accessible at `/swagger`). Below
 Below are the placeholders for the diagrams.
 
 ## 🧩 Conceptual Model  
-![Conceptual Model](./docs/db/ConceptualModel.png)
+![Conceptual Model](./docs/db/ConceptualModel.bmp)
 
 ---
 
 ## 🧠 Logical Model  
-![Logical Model](./docs/db/LogicalModel.png)
+![Logical Model](./docs/db/LogicalModel.bmp)
 
 ---
 
