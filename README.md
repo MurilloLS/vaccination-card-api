@@ -5,262 +5,262 @@
 
 ---
 
-# 📑 Índice
+## 📑 Table of Contents
 
-1. [Visão Geral](#-visão-geral)
-2. [Tecnologias e Ferramentas](#-tecnologias-e-ferramentas)
-3. [Arquitetura e Padrões](#-arquitetura-e-padrões)
-4. [Estrutura de Diretórios](#-estrutura-de-diretórios)
-5. [Decisões de Design e Negócio (ADRs)](#-decisões-de-design-e-negócio-adrs)
-6. [Segurança e Autenticação](#-segurança-e-autenticação)
-7. [Guia de Execução (Getting Started)](#-guia-de-execução-getting-started)
-8. [Testes](#-testes)
-9. [Documentação da API](#-documentação-da-api)
-10. [Modelagem do Banco de Dados](#-modelagem-do-banco-de-dados)
-
----
-
-## 📋 Visão Geral
-
-A **VaccinationCard API** é um sistema de backend robusto desenvolvido para a gestão de cartões de vacinação digitais. O sistema permite o cadastro de cidadãos, o gerenciamento de um catálogo de vacinas (baseado no calendário nacional) e o registro histórico de doses aplicadas, garantindo a integridade e rastreabilidade dos dados de imunização.
-
-O projeto foi construído focando em **Qualidade de Software**, utilizando práticas de mercado como Clean Architecture, CQRS e Testes Automatizados.
+1. [Overview](#-overview)
+2. [Technologies and Tools](#-technologies-and-tools)
+3. [Architecture and Patterns](#-architecture-and-patterns)
+4. [Directory Structure](#-directory-structure)
+5. [Design and Business Decisions (ADRs)](#-design-and-business-decisions-adrs)
+6. [Security and Authentication](#-security-and-authentication)
+7. [Getting Started Guide](#-getting-started-guide)
+8. [Testing](#-testing)
+9. [API Documentation](#-api-documentation)
+10. [Database Modeling](#-database-modeling)
 
 ---
 
-## 🚀 Tecnologias e Ferramentas
+## 📋 Overview
 
-O projeto foi desenvolvido utilizando **C#** e **.NET 8**. Abaixo, as principais bibliotecas e a justificativa para sua escolha:
+The **VaccinationCard API** is a robust backend system developed for managing digital vaccination cards. The system allows citizen registration, management of a vaccine catalog (based on the national calendar), and historical recording of applied doses, ensuring data integrity and traceability of immunization records.
 
-* **Entity Framework Core + SQLite:** Escolhido pela portabilidade e facilidade de configuração local, permitindo persistência robusta sem necessidade de instalar servidores de banco pesados.
-* **MediatR:** Utilizado para implementar o padrão **CQRS** (Command Query Responsibility Segregation), desacoplando totalmente os Controllers da lógica de negócio.
-* **FluentValidation:** Implementação da estratégia *Fail-fast*. As regras de negócio (ex: idade negativa, dose inválida) são validadas antes mesmo de tocar o domínio.
-* **AutoMapper:** Para realizar a transformação entre Entidades (Domínio) e DTOs (Contratos de API), evitando exposição de dados sensíveis.
-* **BCrypt.Net:** Padrão da indústria para hash de senhas. Nenhuma senha é salva em texto puro.
-* **xUnit + Moq + FluentAssertions:** Stack de testes para garantir que a lógica de negócio (Handlers) funcione isoladamente e corretamente.
-* **Swashbuckle (Swagger):** Para documentação interativa e teste manual da API.
+The project was built focusing on **Software Quality**, using market practices like Clean Architecture, CQRS, and Automated Testing.
 
 ---
 
-## 🏛️ Arquitetura e Padrões
+## 🚀 Technologies and Tools
 
-O projeto segue estritamente a **Clean Architecture**, dividindo as responsabilidades em camadas concêntricas:
+The project was developed using **C#** and **.NET 8**. Below are the main libraries and the rationale for their choice:
 
-1. **Domain (Núcleo):** Contém as Entidades (`Person`, `Vaccine`, `User`), Interfaces de Repositório e Regras de Negócio puras. Não depende de nenhuma outra camada.
-2. **Application (Orquestração):** Contém os Casos de Uso implementados via **CQRS** (`Commands` para escrita, `Queries` para leitura), DTOs e Validadores.
-3. **Infrastructure (Mundo Externo):** Implementa o acesso a dados (`Repositories`, `DbContext`), serviços de criptografia e geração de tokens JWT.
-4. **Api (Entrada):** Contém os Controllers REST e configurações de Middleware. Apenas recebe a requisição e entrega para o `MediatR`.
-
-### Padrões Utilizados
-* **CQRS:** Separação clara entre operações de Leitura e Escrita, permitindo otimizações futuras e código mais limpo.
-* **Repository Pattern:** Abstração da camada de dados, facilitando a troca de banco de dados e a criação de Mocks para testes.
-* **Dependency Injection:** Uso extensivo do container nativo do .NET para inversão de controle.
+* **Entity Framework Core + SQLite:** Chosen for portability and local configuration ease, enabling robust persistence without needing to install heavy database servers.
+* **MediatR:** Used to implement the **CQRS** pattern (Command Query Responsibility Segregation), completely decoupling Controllers from business logic.
+* **FluentValidation:** Implementation of the *Fail-fast* strategy. Business rules (ex: negative age, invalid dose) are validated before even touching the domain.
+* **AutoMapper:** To transform between Entities (Domain) and DTOs (API Contracts), avoiding exposure of sensitive data.
+* **BCrypt.Net:** Industry standard for password hashing. No password is saved in plain text.
+* **xUnit + Moq + FluentAssertions:** Testing stack to ensure business logic (Handlers) works isolated and correctly.
+* **Swashbuckle (Swagger):** For interactive documentation and manual API testing.
 
 ---
 
-## 📂 Estrutura de Diretórios
+## 🏛️ Architecture and Patterns
+
+The project strictly follows **Clean Architecture**, dividing responsibilities into concentric layers:
+
+1. **Domain (Core):** Contains Entities (`Person`, `Vaccine`, `User`), Repository Interfaces and pure Business Rules. Does not depend on any other layer.
+2. **Application (Orchestration):** Contains Use Cases implemented via **CQRS** (`Commands` for writing, `Queries` for reading), DTOs and Validators.
+3. **Infrastructure (External World):** Implements data access (`Repositories`, `DbContext`), encryption services and JWT token generation.
+4. **Api (Entry):** Contains REST Controllers and Middleware configurations. Only receives the request and delivers it to `MediatR`.
+
+### Patterns Used
+* **CQRS:** Clear separation between Read and Write operations, allowing future optimizations and cleaner code.
+* **Repository Pattern:** Abstraction of the data layer, facilitating database switching and Mock creation for testing.
+* **Dependency Injection:** Extensive use of .NET's native container for inversion of control.
+
+---
+
+## 📂 Directory Structure
 
 ```text
 VaccinationCardSolution/
 ├── src/
-│   ├── VaccinationCard.Api/           # Controllers, Configuração, Middleware Global
+│   ├── VaccinationCard.Api/           # Controllers, Configuration, Global Middleware
 │   ├── VaccinationCard.Application/   # UseCases (CQRS), DTOs, Validators, Interfaces
-│   ├── VaccinationCard.Domain/        # Entidades, Enums, Exceptions Customizadas
+│   ├── VaccinationCard.Domain/        # Entities, Enums, Custom Exceptions
 │   └── VaccinationCard.Infrastructure/# EF Core, Repositories, Services (Auth)
 └── tests/
-    ├── VaccinationCard.UnitTests/        # Testes de Lógica (Handlers) com Mocks
-    └── VaccinationCard.IntegrationTests/ # Testes E2E (API + Banco em Memória)
+    ├── VaccinationCard.UnitTests/        # Logic Tests (Handlers) with Mocks
+    └── VaccinationCard.IntegrationTests/ # E2E Tests (API + In-Memory Database)
 ```
 
----
+--- 
 
-## 🧠 Decisões de Design e Negócio (ADRs)
+## 🧠 Design and Business Decisions (ADRs)
 
-Nesta seção, documentei as escolhas estratégicas feitas durante o desenvolvimento para equilibrar os requisitos do desafio com as melhores práticas de engenharia de software.
+In this section, I document the strategic choices made during development to balance the challenge requirements with software engineering best practices.
 
-### 1. Gerenciamento de Vacinas: Data Seeding vs. CRUD Público
-* **O Dilema:** O desafio solicitava a funcionalidade de "Cadastrar uma vacina". No entanto, em sistemas de saúde reais, vacinas são **Dados de Referência (Reference Data)** padronizados pelo Ministério da Saúde. Permitir que qualquer usuário cadastre vacinas geraria duplicidade (ex: "Flu", "Gripe", "Influenza") e inconsistência nos relatórios.
-* **A Decisão:**
-    1.  Priorizei a integridade dos dados utilizando **Data Seeding** (`DbInitializer`). Isso garante que o sistema nasça com o catálogo oficial carregado, facilitando o teste imediato do avaliador sem necessidade de configuração manual prévia.
-    2.  Para atender estritamente ao requisito funcional do desafio, implementei os endpoints de gestão (`POST`, `PUT`, `DELETE` em `/api/Vaccines`), mas os protegemos via **RBAC (Role-Based Access Control)**. Apenas usuários com perfil **ADMIN** podem alterar o catálogo, simulando um cenário de Backoffice real.
+### 1. Vaccine Management: Data Seeding vs. Public CRUD
+* **The Dilemma:** The challenge requested the "Register a vaccine" functionality. However, in real healthcare systems, vaccines are **Reference Data** standardized by the Ministry of Health. Allowing any user to register vaccines would generate duplication (ex: "Flu", "Gripe", "Influenza") and inconsistency in reports.
+* **The Decision:**
+    1.  Prioritized data integrity using **Data Seeding** (`DbInitializer`). This ensures the system is born with the official catalog loaded, facilitating immediate testing by the evaluator without manual pre-configuration.
+    2.  To strictly meet the functional requirement of the challenge, implemented the management endpoints (`POST`, `PUT`, `DELETE` at `/api/Vaccines`), but protected them via **RBAC (Role-Based Access Control)**. Only users with **ADMIN** profile can alter the catalog, simulating a real Backoffice scenario.
 
-### 2. Estrutura de Categorias: Normalização vs. Visualização
-* **O Problema:** A interface visual de referência sugere um "Grid Único" (Carteira Nacional), mas clinicamente, algumas vacinas (ex: Meningo B) pertencem à rede particular. O dilema era: simplificar o banco para ter uma categoria só ou modelar corretamente?
-* **A Decisão (Arquitetura Data-Driven):** Optei por manter o banco de dados **normalizado e semântico** (Padrão *Source of Truth*).
-    * **Backend (Verdade):** As vacinas são cadastradas em suas categorias reais ("Básica SUS", "Particular", etc.) no banco de dados via Seed.
-    * **Frontend (Visualização):** A estrutura 1:N entre `VaccineCategory` e `Vaccine` foi mantida. Isso permite que o Frontend trate a "Carteira Nacional" como uma visão agregadora, exibindo vacinas essenciais independente de sua categoria no banco. Essa abordagem facilita a manutenção futura caso novas abas precisem ser criadas apenas via SQL, sem refatoração de código.
+### 2. Category Structure: Normalization vs. Visualization
+* **The Problem:** The reference visual interface suggests a "Single Grid" (National Wallet), but clinically, some vaccines (ex: Meningo B) belong to the private network. The dilemma was: simplify the database to have one category or model it correctly?
+* **The Decision (Data-Driven Architecture):** Opted to keep the database **normalized and semantic** (Standard *Source of Truth*).
+    * **Backend (Truth):** Vaccines are registered in their real categories ("Basic SUS", "Private", etc.) in the database via Seed.
+    * **Frontend (Visualization):** The 1:N structure between `VaccineCategory` and `Vaccine` was maintained. This allows the Frontend to treat the "National Wallet" as an aggregating view, displaying essential vaccines regardless of their database category. This approach facilitates future maintenance if new tabs need to be created only via SQL, without code refactoring.
 
-### 3. Estratégia de Exclusão: Verbose Delete
-* **O Problema:** O padrão REST sugere retornar `204 No Content` para exclusões bem-sucedidas. Porém, em sistemas críticos de saúde, o usuário precisa de feedback claro sobre o que acabou de remover para evitar erros operacionais (ex: apagar o registro do paciente errado).
-* **A Decisão:** Implementei o **Verbose Delete**. Os endpoints `DELETE` retornam status `200 OK` contendo o JSON do objeto excluído. Isso melhora a **Experiência do Usuário (UX)**, permitindo que o Frontend exiba mensagens de confirmação precisas (ex: *"O registro de vacina BCG de Murillo foi removido"*).
+### 3. Deletion Strategy: Verbose Delete
+* **The Problem:** The REST standard suggests returning `204 No Content` for successful deletions. However, in critical healthcare systems, the user needs clear feedback about what was just removed to avoid operational errors (ex: deleting the wrong patient record).
+* **The Decision:** Implemented **Verbose Delete**. The `DELETE` endpoints return status `200 OK` containing the JSON of the deleted object. This improves **User Experience (UX)**, allowing the Frontend to display precise confirmation messages (ex: *"The BCG vaccine record for Murillo was removed"*).
 
-### 4. Tratamento de Erros: Global Exception Handler
-* **O Problema:** Validar regras de negócio (ex: "Idade não pode ser negativa", "Vacina já aplicada") dentro dos Controllers gera código repetitivo e "sujo" com múltiplos blocos `try-catch`.
-* **A Decisão:** Utilizei o middleware `IExceptionHandler` nativo do .NET 8.
-    * Criei uma exceção personalizada `DomainException`.
-    * O Controller executa apenas o "caminho feliz". Se uma regra for violada, o Middleware intercepta o erro e padroniza a resposta JSON como **400 Bad Request** (conforme a [RFC 7807](https://tools.ietf.org/html/rfc7807)). Isso mantém os Controllers limpos e focados apenas na orquestração HTTP.
+### 4. Error Handling: Global Exception Handler
+* **The Problem:** Validating business rules (ex: "Age cannot be negative", "Vaccine already applied") within Controllers generates repetitive and "dirty" code with multiple `try-catch` blocks.
+* **The Decision:** Used the native .NET 8 `IExceptionHandler` middleware.
+    * Created a custom exception `DomainException`.
+    * The Controller only executes the "happy path". If a rule is violated, the Middleware intercepts the error and standardizes the JSON response as **400 Bad Request** (according to [RFC 7807](https://tools.ietf.org/html/rfc7807)). This keeps Controllers clean and focused only on HTTP orchestration.
 
-### 5. Segurança Ofensiva: Bloqueio de Rotas Destrutivas
+### 5. Offensive Security: Blocking Destructive Routes
 
-| Recurso | Endpoint | Método | Ação | Acesso USER | Acesso ADMIN |
+| Resource | Endpoint | Method | Action | USER Access | ADMIN Access |
 | :--- | :--- | :---: | :--- | :---: | :---: |
-| **Auth** | `/api/Auth/register` | `POST` | Criar Usuário | ✅ Público | ✅ Público |
-| | `/api/Auth/login` | `POST` | Obter Token | ✅ Público | ✅ Público |
-| **Persons** | `/api/Persons` | `POST` | Criar Paciente | ✅ Sim | ✅ Sim |
-| | `/api/Persons` | `GET` | Listar Todos | ✅ Sim | ✅ Sim |
-| | `/api/Persons/{id}` | `GET` | Ver Cartão | ✅ Sim | ✅ Sim |
-| | `/api/Persons/{id}` | `PUT` | Editar Paciente | ✅ Sim | ✅ Sim |
-| | `/api/Persons/{id}` | `DELETE` | Apagar Paciente | ❌ **Proibido** | ✅ **Permitido** |
-| **Vaccines** | `/api/Vaccines` | `GET` | Listar Catálogo | ✅ Sim | ✅ Sim |
-| | `/api/Vaccines` | `POST` | Criar Vacina | ❌ **Proibido** | ✅ **Permitido** |
-| | `/api/Vaccines/{id}` | `PUT` | Corrigir Nome | ❌ **Proibido** | ✅ **Permitido** |
-| | `/api/Vaccines/{id}` | `DELETE` | Apagar Vacina | ❌ **Proibido** | ✅ **Permitido** |
-| **Vaccinations**| `/api/Vaccinations` | `POST` | Aplicar Dose | ✅ Sim | ✅ Sim |
-| | `/api/Vaccinations/{id}`| `GET` | Ver Detalhe | ✅ Sim | ✅ Sim |
-| | `/api/Vaccinations/{id}`| `PUT` | Corrigir Dose | ✅ Sim | ✅ Sim |
-| | `/api/Vaccinations/{id}`| `DELETE` | Estornar Dose | ❌ **Proibido** | ✅ **Permitido** |
+| **Auth** | `/api/Auth/register` | `POST` | Create User | ✅ Public | ✅ Public |
+| | `/api/Auth/login` | `POST` | Get Token | ✅ Public | ✅ Public |
+| **Persons** | `/api/Persons` | `POST` | Create Patient | ✅ Yes | ✅ Yes |
+| | `/api/Persons` | `GET` | List All | ✅ Yes | ✅ Yes |
+| | `/api/Persons/{id}` | `GET` | View Card | ✅ Yes | ✅ Yes |
+| | `/api/Persons/{id}` | `PUT` | Edit Patient | ✅ Yes | ✅ Yes |
+| | `/api/Persons/{id}` | `DELETE` | Delete Patient | ❌ **Forbidden** | ✅ **Allowed** |
+| **Vaccines** | `/api/Vaccines` | `GET` | List Catalog | ✅ Yes | ✅ Yes |
+| | `/api/Vaccines` | `POST` | Create Vaccine | ❌ **Forbidden** | ✅ **Allowed** |
+| | `/api/Vaccines/{id}` | `PUT` | Correct Name | ❌ **Forbidden** | ✅ **Allowed** |
+| | `/api/Vaccines/{id}` | `DELETE` | Delete Vaccine | ❌ **Forbidden** | ✅ **Allowed** |
+| **Vaccinations**| `/api/Vaccinations` | `POST` | Apply Dose | ✅ Yes | ✅ Yes |
+| | `/api/Vaccinations/{id}`| `GET` | View Detail | ✅ Yes | ✅ Yes |
+| | `/api/Vaccinations/{id}`| `PUT` | Correct Dose | ✅ Yes | ✅ Yes |
+| | `/api/Vaccinations/{id}`| `DELETE` | Reverse Dose | ❌ **Forbidden** | ✅ **Allowed** |
 ---
 
-## 🔒 Segurança e Autenticação
+## 🔒 Security and Authentication
 
-A API é protegida via **JWT (JSON Web Token)**.
+The API is protected via **JWT (JSON Web Token)**.
 
-1. **Registro/Login:** O usuário envia credenciais. A API valida o hash da senha (BCrypt) e retorna um Token assinado.
-2. **Acesso:** O cliente deve enviar o cabeçalho `Authorization: Bearer <TOKEN>` em todas as requisições protegidas.
-3. **Swagger:** A documentação possui suporte nativo (botão cadeado 🔒) para testar endpoints autenticados.
+1. **Register/Login:** User sends credentials. API validates password hash (BCrypt) and returns a signed Token.
+2. **Access:** Client must send the `Authorization: Bearer <TOKEN>` header in all protected requests.
+3. **Swagger:** Documentation has native support (lock button 🔒) to test authenticated endpoints.
 
 ---
 
-## ⚡ Guia de Execução (Getting Started)
+## ⚡ Getting Started Guide
 
-### 🛠️ Pré-requisitos
+### 🛠️ Prerequisites
 
-* **[.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)**: Necessário para compilar e rodar a aplicação.
-* **Git**: Para clonar o repositório.
+* **[.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)**: Required to compile and run the application.
+* **Git**: To clone the repository.
 
-### 🚀 Como Rodar (Passo a Passo)
+### 🚀 How to Run (Step by Step)
 
-1.  **Clone o repositório:**
+1.  **Clone the repository:**
     ```bash
     git clone https://github.com/MurilloLS/vaccination-card-api.git
     cd VaccinationCardSolution
     ```
 
-2.  **Execute a API:**
-    A aplicação utiliza **SQLite**. Não é necessário instalar nenhum banco de dados externo.
-    Ao rodar o comando abaixo, o sistema irá automaticamente:
-    * Criar o arquivo do banco (`vaccination_card.db`).
-    * Aplicar as migrações (Tabelas).
-    * Popular os dados iniciais (Vacinas do SUS e Usuário Admin).
+2.  **Run the API:**
+    The application uses **SQLite**. No external database installation is required.
+    When running the command below, the system will automatically:
+    * Create the database file (`vaccination_card.db`).
+    * Apply migrations (Tables).
+    * Populate initial data (SUS Vaccines and Admin User).
     
     ```bash
     dotnet run --project src/VaccinationCard.Api
     ```
 
-3.  **Acesse a Documentação Interativa:**
-    Abra o navegador no endereço indicado no terminal (geralmente porta 5000 ou 5205).
+3.  **Access Interactive Documentation:**
+    Open your browser at the address indicated in the terminal (usually port 5000 or 5205).
     👉 **http://localhost:5205/swagger**
 
-### 🔑 Credenciais de Acesso (Seed Automático)
+### 🔑 Access Credentials (Automatic Seed)
 
-O sistema vem pré-configurado com um superusuário para facilitar a avaliação:
+The system comes pre-configured with a superuser to facilitate evaluation:
 
-| Role | Username | Password | Permissões |
+| Role | Username | Password | Permissions |
 | :--- | :--- | :--- | :--- |
-| **ADMIN** | `admin` | `admin123` | Acesso Total (Inclui `DELETE` e gestão de catálogo). |
-| **USER** | *(Criar via API)* | *(Criar via API)* | Operacional (Registrar vacinação, Consultar). |
+| **ADMIN** | `admin` | `admin123` | Full Access (Includes `DELETE` and catalog management). |
+| **USER** | *(Create via API)* | *(Create via API)* | Operational (Register vaccination, Consult). |
 
 ---
 
-### 🕵️‍♂️ Como Testar os Perfis (Tutorial de Segurança)
+### 🕵️‍♂️ How to Test Profiles (Security Tutorial)
 
-Para validar o sistema de segurança **RBAC** (Role-Based Access Control), siga este roteiro no Swagger:
+To validate the **RBAC** (Role-Based Access Control) security system, follow this script in Swagger:
 
-#### 1. Testando o "Poder Total" (ADMIN)
-1.  No Swagger, vá em **Auth** -> `POST /api/Auth/login`.
-2.  Use as credenciais de seed (`admin` / `admin123`).
-3.  Copie o **Token** gerado na resposta (string longa).
-4.  Suba ao topo da página, clique no botão **Authorize** (cadeado) e cole o token no formato:
-    `Bearer <seu_token_aqui>`
-5.  Agora tente deletar um paciente (`DELETE /api/Persons/1`).
-    * **Resultado:** ✅ `200 OK` (A operação é permitida).
+#### 1. Testing "Full Power" (ADMIN)
+1.  In Swagger, go to **Auth** -> `POST /api/Auth/login`.
+2.  Use the seed credentials (`admin` / `admin123`).
+3.  Copy the generated **Token** from the response (long string).
+4.  Go to the top of the page, click the **Authorize** button (lock) and paste the token in the format:
+    `Bearer <your_token_here>`
+5.  Now try to delete a patient (`DELETE /api/Persons/1`).
+    * **Result:** ✅ `200 OK` (The operation is allowed).
 
-#### 2. Testando o "Acesso Restrito" (USER)
-1.  Crie um usuário comum em `POST /api/Auth/register` (ex: `username: "enfermeiro"`).
-2.  Faça login com ele e pegue o novo Token.
-3.  Troque o token no botão **Authorize** (faça Logout antes).
-4.  Tente criar uma nova vacina no catálogo (`POST /api/Vaccines`).
-    * **Resultado:** 🚫 `403 Forbidden` (O sistema bloqueia a ação, provando que a segurança funciona).
+#### 2. Testing "Restricted Access" (USER)
+1.  Create a common user at `POST /api/Auth/register` (ex: `username: "nurse"`).
+2.  Login with it and get the new Token.
+3.  Change the token in the **Authorize** button (Logout first).
+4.  Try to create a new vaccine in the catalog (`POST /api/Vaccines`).
+    * **Result:** 🚫 `403 Forbidden` (The system blocks the action, proving security works).
 
 ---
 
-## 🧪 Testes
+## 🧪 Testing
 
-O projeto possui uma suíte de testes abrangente.
+The project has a comprehensive test suite.
 
-### Como Rodar
+### How to Run
 
 ```bash
 dotnet test
 ```
 
-### Cobertura
+### Coverage
 
-* **Testes Unitários (`xUnit` + `Moq`):** Cobrem 100% dos *Handlers* (Casos de Uso). Validam regras de negócio, cálculos de idade, validação de doses e exceções de domínio, isolando o banco de dados.
-* **Testes de Integração (`WebApplicationFactory`):** Validam o fluxo completo (HTTP → Auth → Banco em Memória), garantindo que a API responde corretamente e que o token JWT é validado.
-
----
-
-## 📖 Documentação da API
-
-A API é totalmente documentada via **Swagger UI** (acessível em `/swagger`). Abaixo, o detalhamento dos recursos, suas responsabilidades e níveis de acesso:
-
-### 🔐 Auth (Autenticação)
-*Responsável pela emissão de credenciais.*
-* `POST /api/Auth/register`: Criação de novos usuários no sistema.
-* `POST /api/Auth/login`: Autenticação via credenciais. Retorna o **Bearer Token** JWT necessário para acessar as rotas protegidas.
-
-### 👤 Persons (Pacientes)
-*Gestão do cadastro de cidadãos e visualização do cartão.*
-* `GET /api/Persons`: Lista todos os cidadãos cadastrados.
-* `GET /api/Persons/{id}`: **[Destaque]** Retorna o **Cartão de Vacinação Digital** completo (Dados pessoais + Histórico de doses tomadas).
-* `POST /api/Persons`: Cadastra um novo cidadão.
-* `PUT /api/Persons/{id}`: Atualiza dados cadastrais (Nome, Idade, etc).
-* `DELETE /api/Persons/{id}`: 🛡️ **Restrito (Admin)**. Remove o cidadão e **exclui em cascata** todo o seu histórico de vacinação.
-
-### 💉 Vaccinations (Registro de Doses)
-*O "Core" do sistema. Registra o ato de vacinar (Vínculo: Pessoa + Vacina + Dose + Data).*
-* `POST /api/Vaccinations`: Registra uma dose aplicada.
-    * *Validações:* Impede datas futuras, verifica existência de paciente/vacina e valida tipos de dose (D1, D2, R1...).
-* `GET /api/Vaccinations/{id}`: Consulta detalhes de um registro de aplicação específico.
-* `PUT /api/Vaccinations/{id}`: Permite correção de lançamentos errados (ex: data ou dose incorreta).
-* `DELETE /api/Vaccinations/{id}`: 🛡️ **Restrito (Admin)**. Permite o estorno/remoção de um lançamento de vacina.
-
-### 🧪 Vaccines (Catálogo de Imunizantes)
-*Gerenciamento dos Dados de Referência (Carregados via Seed).*
-* `GET /api/Vaccines`: Lista todas as vacinas disponíveis no catálogo para preencher o grid de seleção.
-* `POST /api/Vaccines`: 🛡️ **Restrito (Admin)**. Adiciona novas vacinas ao catálogo.
-* `PUT /api/Vaccines/{id}`: 🛡️ **Restrito (Admin)**. Corrige nomes ou categorias de vacinas.
-* `DELETE /api/Vaccines/{id}`: 🛡️ **Restrito (Admin)**. Remove vacinas do catálogo.
-    * *Trava de Segurança:* O sistema **impede** a exclusão se a vacina já tiver sido aplicada em algum paciente, garantindo integridade histórica.
+* **Unit Tests (`xUnit` + `Moq`):** Cover 100% of *Handlers* (Use Cases). Validate business rules, age calculations, dose validation and domain exceptions, isolating the database.
+* **Integration Tests (`WebApplicationFactory`):** Validate the complete flow (HTTP → Auth → In-Memory Database), ensuring the API responds correctly and the JWT token is validated.
 
 ---
 
-# 🗄 Modelagem do Banco de Dados
+## 📖 API Documentation
 
-Abaixo estão os espaços reservados para os diagramas.
+The API is fully documented via **Swagger UI** (accessible at `/swagger`). Below is the detailing of resources, their responsibilities and access levels:
 
-## 🧩 Modelo Conceitual  
-![Modelo Conceitual](./docs/db/ConceptualModel.bmp)
+### 🔐 Auth (Authentication)
+*Responsible for credential issuance.*
+* `POST /api/Auth/register`: Creation of new users in the system.
+* `POST /api/Auth/login`: Authentication via credentials. Returns the **Bearer Token** JWT needed to access protected routes.
+
+### 👤 Persons (Patients)
+*Management of citizen registration and card visualization.*
+* `GET /api/Persons`: Lists all registered citizens.
+* `GET /api/Persons/{id}`: **[Highlight]** Returns the complete **Digital Vaccination Card** (Personal data + History of taken doses).
+* `POST /api/Persons`: Registers a new citizen.
+* `PUT /api/Persons/{id}`: Updates registration data (Name, Age, etc).
+* `DELETE /api/Persons/{id}`: 🛡️ **Restricted (Admin)**. Removes the citizen and **cascading deletes** all their vaccination history.
+
+### 💉 Vaccinations (Dose Registration)
+*The "Core" of the system. Records the act of vaccination (Link: Person + Vaccine + Dose + Date).*
+* `POST /api/Vaccinations`: Registers an applied dose.
+    * *Validations:* Prevents future dates, verifies existence of patient/vaccine and validates dose types (D1, D2, R1...).
+* `GET /api/Vaccinations/{id}`: Consults details of a specific application record.
+* `PUT /api/Vaccinations/{id}`: Allows correction of wrong entries (ex: incorrect date or dose).
+* `DELETE /api/Vaccinations/{id}`: 🛡️ **Restricted (Admin)**. Allows reversal/removal of a vaccine application record.
+
+### 🧪 Vaccines (Immunization Catalog)
+*Management of Reference Data (Loaded via Seed).*
+* `GET /api/Vaccines`: Lists all available vaccines in the catalog to populate the selection grid.
+* `POST /api/Vaccines`: 🛡️ **Restricted (Admin)**. Adds new vaccines to the catalog.
+* `PUT /api/Vaccines/{id}`: 🛡️ **Restricted (Admin)**. Corrects names or categories of vaccines.
+* `DELETE /api/Vaccines/{id}`: 🛡️ **Restricted (Admin)**. Removes vaccines from the catalog.
+    * *Security Lock:* The system **prevents** deletion if the vaccine has already been applied to any patient, ensuring historical integrity.
 
 ---
 
-## 🧠 Modelo Lógico  
-![Modelo Lógico](./docs/db/LogicalModel.bmp)
+# 🗄 Database Modeling
+
+Below are the placeholders for the diagrams.
+
+## 🧩 Conceptual Model  
+![Conceptual Model](./docs/db/ConceptualModel.bmp)
 
 ---
 
-## 🧱 Modelo Físico (SQL ANSI 2003 – brModelo)
+## 🧠 Logical Model  
+![Logical Model](./docs/db/LogicalModel.bmp)
+
+---
+
+## 🧱 Physical Model (SQL ANSI 2003 – brModelo)
 
 ```sql
 -- Sql ANSI 2003 - brModelo.
@@ -305,32 +305,35 @@ ALTER TABLE VACCINE ADD FOREIGN KEY(id_vaccine_category) REFERENCES VACCINE_CATE
 
 ---
 
-## 🔄 Histórico de Evoluções e Decisões Recentes (Errata)
+## 🔄 History of Evolutions and Recent Decisions (Errata)
 
-Esta seção documenta alterações estruturais e decisões técnicas implementadas após a versão inicial do projeto.
+This section documents structural changes and technical decisions implemented after the initial version of the project.
 
-### 1. Implementação de Doses Dinâmicas (Banco Alterado)
-* **O Desafio:** Inicialmente, o sistema não restringia o número de doses de uma vacina no Backend, dependendo de regras fixas no Frontend. Isso gerava inconsistências ao criar novas vacinas.
-* **A Solução:** Evoluímos para uma abordagem **Data-Driven**.
-    * **Backend:** Adicionamos a propriedade `MaxDoses` na entidade `Vaccine`, validando valores entre 1 (dose única) e 5 (esquema completo). A tabela `VACCINE` recebeu a coluna correspondente.
-    * **Frontend:** O cadastro de vacinas agora exige que o Admin defina o número de doses. A interface do cartão se adapta dinamicamente, exibindo apenas os "slots" de doses pertinentes àquela vacina.
-    * **Seed:** O `DbInitializer` foi atualizado para carregar vacinas com suas doses reais (ex: BCG = 1 dose, Pólio = 5 doses), garantindo realismo desde o primeiro boot.
+### 1. Dynamic Doses Implementation (Database Changed)
+
+* **The Challenge:** Initially, the system did not restrict the number of vaccine doses in the Backend, depending on fixed rules in the Frontend. This generated inconsistencies when creating new vaccines.
+* **The Solution:** Evolved to a **Data-Driven** approach.
+    * **Backend:** Added the `MaxDoses` property in the `Vaccine` entity, validating values between 1 (single dose) and 5 (complete scheme). The `VACCINE` table received the corresponding column.
+    * **Frontend:** Vaccine registration now requires the Admin to define the number of doses. The card interface dynamically adapts, displaying only the dose "slots" pertinent to that vaccine.
+    * **Seed:** The `DbInitializer` was updated to load vaccines with their real doses (ex: BCG = 1 dose, Polio = 5 doses), ensuring realism from the first boot.
 
 ```sql
 CREATE TABLE VACCINE (
 id_vaccine INTEGER PRIMARY KEY,
 nm_vaccine VARCHAR(150) NOT NULL,
 id_vaccine_category INTEGER NOT NULL,
-nr_max_doses INTEGER NOT NULL DEFAULT 5 -- Nova Coluna
+nr_max_doses INTEGER NOT NULL DEFAULT 5 -- New Column
 )
 ```
 
-### 2. Correção de Vínculo de Categoria (Payload de Retorno)
-* **O Problema:** Ao criar uma vacina via API, o DTO de resposta retornava o nome da categoria como `null`, pois o Entity Framework não recarregava a propriedade de navegação (*Navigation Property*) imediatamente após a inserção.
-* **A Solução:**
-    * Atualizamos o `VaccineDto` para expor explicitamente o `CategoryId`, garantindo a confirmação imediata do vínculo salvo.
-    * Ajustamos o `CreateVaccineHandler` para recarregar a entidade completa (com `Include`) antes de mapear para o DTO, garantindo que o cliente (Frontend/Swagger) receba o objeto completo e consistente instantaneamente.
+### 2. Category Link Correction (Return Payload)
 
-### 3. Atualização da Suíte de Testes
-* **Impacto:** As alterações no construtor da entidade `Vaccine` (exigindo `MaxDoses`) quebraram os testes unitários existentes.
-* **Ação:** Todos os testes de caso de uso (`Create`, `Update`, `Delete`, `GetAll`) foram refatorados para contemplar a nova propriedade, mantendo a cobertura de testes em 100% e garantindo que a nova regra de negócio (1-5 doses) seja respeitada.
+* **The Problem:** When creating a vaccine via API, the response DTO returned the category name as `null`, because Entity Framework did not immediately reload the navigation property after insertion.
+* **The Solution:**
+    * Updated `VaccineDto` to explicitly expose `CategoryId`, ensuring immediate confirmation of the saved link.
+    * Adjusted `CreateVaccineHandler` to reload the complete entity (with `Include`) before mapping to the DTO, ensuring the client (Frontend/Swagger) receives the complete and consistent object instantly.
+
+### 3. Test Suite Update
+
+* **Impact:** Changes in the `Vaccine` entity constructor (requiring `MaxDoses`) broke existing unit tests.
+* **Action:** All use case tests (`Create`, `Update`, `Delete`, `GetAll`) were refactored to contemplate the new property, maintaining test coverage at 100% and ensuring the new business rule (1-5 doses) is respected.
