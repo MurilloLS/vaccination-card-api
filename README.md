@@ -143,7 +143,7 @@ The API is protected via **JWT (JSON Web Token)**.
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/MurilloLS/vaccination-card-api.git
-    cd VaccinationCardSolution
+    cd vaccination-card-api
     ```
 
 2.  **Run the API:**
